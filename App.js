@@ -4,13 +4,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 
 // Import providers and components with correct paths
 import { HabitProvider } from './src/contexts/HabitContext';
-import { ProfileProvider } from './src/contexts/ProfileContext';
 import { ThemeProvider, useTheme } from './src/contexts/ThemeContext';
+import { ProfileProvider } from './src/contexts/ProfileContext';
 import NotificationManager from './src/components/Notifications/NotificationManager';
 import HomeScreen from './src/screens/HomeScreen';
 import StatisticsScreen from './src/screens/StatisticsScreen';
@@ -73,7 +73,7 @@ function TabNavigator() {
 
 export default function App() {
   return (
-      <SafeAreaProvider>
+    <SafeAreaProvider>
         <ThemeProvider>
           <ProfileProvider> {/* Wrap with ProfileProvider */}
             <HabitProvider>
