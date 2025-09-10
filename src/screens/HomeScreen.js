@@ -1,6 +1,5 @@
-// src/screens/HomeScreen.js
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useTheme } from '../contexts/ThemeContext';
 import { useHabits } from '../contexts/HabitContext';
@@ -17,7 +16,7 @@ const HomeScreen = () => {
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
 
-  // Generate current month data
+  // FIX: Ensure all functions return proper values
   const currentDate = new Date();
   const currentMonth = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
   const weekDays = ["S", "M", "T", "W", "T", "F", "S"];
@@ -30,12 +29,13 @@ const HomeScreen = () => {
     [27, 28, 29, 30, null, null, null]
   ];
 
+  // FIX: Make sure this returns a string, not undefined
   const getUserName = () => {
     if (!profileData?.name || profileData.name === 'User') return 'User';
-    return profileData.name.split(' ')[0];
+    return profileData.name.split(' ')[0] || 'User';
   };
 
-  const todayHabits = habits;
+  const todayHabits = habits || [];
 
   const startEditing = (habit) => {
     setEditingHabitId(habit.id);
@@ -85,6 +85,7 @@ const HomeScreen = () => {
         onPress={() => day && setSelectedDate(day)}
         disabled={!day}
       >
+        {/* FIX: Always wrap text in <Text> component */}
         <Text style={[
           styles.dayText,
           { color: day ? colors.text : 'transparent' },
@@ -99,10 +100,9 @@ const HomeScreen = () => {
     );
   };
 
-  const renderHabitItem = ({ item }) => (
+  const renderHabitItem = (item) => (
     <View style={[styles.habitItem, { backgroundColor: colors.card }]}>
       {editingHabitId === item.id ? (
-        // Edit Mode
         <View style={styles.editContainer}>
           <TextInput
             style={[styles.editInput, { color: colors.text, borderColor: colors.border }]}
@@ -130,7 +130,6 @@ const HomeScreen = () => {
           </View>
         </View>
       ) : (
-        // View Mode
         <>
           <TouchableOpacity onPress={() => toggleHabitCompletion(item.id)} style={styles.habitContent}>
             <View style={[
@@ -181,89 +180,87 @@ const HomeScreen = () => {
   );
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
-          
-          {/* Header */}
-          <View style={[styles.header, { backgroundColor: colors.card }]}>
-            <View>
-              <Text style={[styles.greeting, { color: colors.text }]}>
-                Hello, {getUserName()}
-              </Text>
-              <Text style={[styles.date, { color: colors.textSecondary }]}>
-                {currentMonth}
-              </Text>
-            </View>
-            <TouchableOpacity
-              style={[styles.addButton, { backgroundColor: colors.primary }]}
-              onPress={() => setIsFormVisible(true)}
-            >
-              <Ionicons name="add" size={24} color="white" />
-            </TouchableOpacity>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
+        
+        {/* Header */}
+        <View style={[styles.header, { backgroundColor: colors.card }]}>
+          <View>
+            <Text style={[styles.greeting, { color: colors.text }]}>
+              Hello, {getUserName()}!
+            </Text>
+            <Text style={[styles.date, { color: colors.textSecondary }]}>
+              {currentMonth}
+            </Text>
           </View>
+          <TouchableOpacity
+            style={[styles.addButton, { backgroundColor: colors.primary }]}
+            onPress={() => setIsFormVisible(true)}
+          >
+            <Ionicons name="add" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
 
-          <ScrollView style={styles.scrollView}>
-            {/* Calendar Grid */}
-            <View style={[styles.calendarContainer, { backgroundColor: colors.card }]}>
-              <View style={styles.weekDaysRow}>
-                {weekDays.map((day, index) => (
-                  <Text key={index} style={[styles.weekDayText, { color: colors.textSecondary }]}>
-                    {day}
-                  </Text>
-                ))}
-              </View>
-
-              {weeks.map((week, rowIndex) => (
-                <View key={rowIndex} style={styles.calendarRow}>
-                  {week.map((day, colIndex) => renderCalendarDay(day, rowIndex, colIndex))}
-                </View>
+        <ScrollView style={styles.scrollView}>
+          {/* Calendar Grid */}
+          <View style={[styles.calendarContainer, { backgroundColor: colors.card }]}>
+            <View style={styles.weekDaysRow}>
+              {weekDays.map((day, index) => (
+                <Text key={index} style={[styles.weekDayText, { color: colors.textSecondary }]}>
+                  {day}
+                </Text>
               ))}
             </View>
 
-            {/* Today's Habits */}
-            <View style={styles.habitsSection}>
-              <View style={styles.sectionHeader}>
-                <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                  Today's Habits
-                </Text>
-                <Text style={[styles.habitsCount, { color: colors.textSecondary }]}>
-                  {todayHabits.length} tasks
-                </Text>
+            {weeks.map((week, rowIndex) => (
+              <View key={rowIndex} style={styles.calendarRow}>
+                {week.map((day, colIndex) => renderCalendarDay(day, rowIndex, colIndex))}
               </View>
+            ))}
+          </View>
 
-              {todayHabits.length > 0 ? (
-                <View style={styles.habitsList}>
-                  {todayHabits.map((item) => (
-                    <View key={item.id}>
-                      {renderHabitItem({ item })}
-                    </View>
-                  ))}
-                </View>
-              ) : (
-                <View style={styles.emptyHabits}>
-                  <Ionicons name="checkmark-done" size={48} color={colors.textSecondary} />
-                  <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-                    All caught up for today!
-                  </Text>
-                  <TouchableOpacity
-                    style={[styles.addFirstButton, { backgroundColor: colors.primary }]}
-                    onPress={() => setIsFormVisible(true)}
-                  >
-                    <Text style={styles.addFirstText}>Add Your First Habit</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
+          {/* Today's Habits */}
+          <View style={styles.habitsSection}>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>
+                Today's Habits
+              </Text>
+              <Text style={[styles.habitsCount, { color: colors.textSecondary }]}>
+                {todayHabits.length} tasks
+              </Text>
             </View>
-          </ScrollView>
 
-          <HabitForm />
-        </View>
-      </KeyboardAvoidingView>
-    </GestureHandlerRootView>
+            {todayHabits.length > 0 ? (
+              <View style={styles.habitsList}>
+                {todayHabits.map((item) => (
+                  <View key={item.id}>
+                    {renderHabitItem(item)}
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <View style={styles.emptyHabits}>
+                <Ionicons name="checkmark-done" size={48} color={colors.textSecondary} />
+                <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+                  All caught up for today!
+                </Text>
+                <TouchableOpacity
+                  style={[styles.addFirstButton, { backgroundColor: colors.primary }]}
+                  onPress={() => setIsFormVisible(true)}
+                >
+                  <Text style={styles.addFirstText}>Add Your First Habit</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        </ScrollView>
+
+        <HabitForm />
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 

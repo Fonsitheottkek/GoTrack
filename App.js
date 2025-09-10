@@ -22,15 +22,16 @@ function TabNavigator() {
   const { colors, isDark } = useTheme();
 
   return (
-    <Tab.Navigator
+    <Tab.Navigator 
       screenOptions={({ route }) => ({
+        headerShown: false,
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
 
           if (route.name === 'Home') {
             iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Stats') {
-            iconName = focused ? 'stats-chart' : 'stats-chart-outline';
+            iconName = focused ? 'analytics' : 'analytics-outline';
           } else if (route.name === 'Profile') {
             iconName = focused ? 'person' : 'person-outline';
           }
@@ -38,24 +39,22 @@ function TabNavigator() {
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarInactiveTintColor: 'gray',
         tabBarStyle: {
           backgroundColor: colors.card,
-          borderTopColor: colors.border,
+          borderTopColor: isDark ? '#222' : '#eee',
         },
         headerStyle: {
           backgroundColor: colors.card,
         },
-        headerTintColor: colors.text,
         headerTitleStyle: {
-          fontWeight: 'bold',
+          color: colors.text,
         },
       })}
-    >
+        >
       <Tab.Screen 
         name="Home" 
         component={HomeScreen}
-        options={{ title: 'Home' }}
       />
       <Tab.Screen 
         name="Stats" 
