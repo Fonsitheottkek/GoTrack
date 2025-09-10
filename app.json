@@ -20,7 +20,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.HabitTracker2.x0"
+    },
+    "expo": {
+      "plugins": [
+        [
+          "expo-image-picker",
+          {
+            "photosPermission": "The app accesses your photos to let you set a profile picture.",
+            "cameraPermission": "The app accesses your camera to let you take a profile photo."
+          }
+        ]
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
