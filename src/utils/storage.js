@@ -2,11 +2,20 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HABITS_KEY = '@habits';
+// src/utils/storage.js - Update to new File System API
+import * as FileSystem from 'expo-file-system';
 
+// Replace deprecated methods with new API
 export const loadHabits = async () => {
   try {
-    const storedHabits = await AsyncStorage.getItem(HABITS_KEY);
-    return storedHabits ? JSON.parse(storedHabits) : [];
+    const fileUri = FileSystem.documentDirectory + 'habits.json';
+    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+    
+    if (fileInfo.exists) {
+      const content = await FileSystem.readAsStringAsync(fileUri);
+      return content ? JSON.parse(content) : [];
+    }
+    return [];
   } catch (error) {
     console.error('Error loading habits:', error);
     return [];
@@ -15,7 +24,8 @@ export const loadHabits = async () => {
 
 export const saveHabits = async (habits) => {
   try {
-    await AsyncStorage.setItem(HABITS_KEY, JSON.stringify(habits));
+    const fileUri = FileSystem.documentDirectory + 'habits.json';
+    await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(habits));
   } catch (error) {
     console.error('Error saving habits:', error);
   }
@@ -23,7 +33,12 @@ export const saveHabits = async (habits) => {
 
 export const clearStorage = async () => {
   try {
-    await AsyncStorage.clear();
+    const fileUri = FileSystem.documentDirectory + 'habits.json';
+    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+    
+    if (fileInfo.exists) {
+      await FileSystem.deleteAsync(fileUri);
+    }
   } catch (error) {
     console.error('Error clearing storage:', error);
   }

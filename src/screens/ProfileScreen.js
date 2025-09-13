@@ -119,11 +119,12 @@ const ProfileScreen = () => {
       const hasPermission = await requestPermissions();
       if (!hasPermission) return;
 
-      const result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
+      const result = await ImagePicker.launchImageLibraryAsync({
+  mediaTypes: ImagePicker.MediaType.Images, // NEW API
+  allowsEditing: true,
+  aspect: [1, 1],
+  quality: 0.8,
+});
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const newProfileData = { 

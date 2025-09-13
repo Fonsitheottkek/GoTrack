@@ -45,11 +45,9 @@ export const ProfileProvider = ({ children }) => {
   const updateProfileData = async (newData) => {
     try {
       setProfileData(newData);
-      setUpdateCount(prev => prev + 1); // Trigger re-render
-      await FileSystem.writeAsStringAsync(
-        FileSystem.documentDirectory + 'profile.json',
-        JSON.stringify(newData)
-      );
+      setUpdateCount(prev => prev + 1);
+      const fileUri = FileSystem.documentDirectory + 'profile.json';
+      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(newData));
     } catch (error) {
       console.error('Error saving profile data:', error);
       throw error;
